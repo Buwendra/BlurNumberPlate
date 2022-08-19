@@ -25,18 +25,23 @@ async function readImage(fileName) {
 
                 const objects = result.localizedObjectAnnotations;
                 var newVertises = [];
+                var plateFound = false;
                 for (object of objects) {
                     if (object.name === 'License plate') {
+                        plateFound = true;
                         console.log(`Name: ${object.name}`);
                         const vertices = object.boundingPoly.normalizedVertices;
                         for (v of vertices) {
                             newVertises.push({ x: v.x * dimensions.width, y: v.y * dimensions.height })
                             console.log(newVertises);
                         }
-                    } else {
-                        console.log(`No License Plate ${fileName}`)
-                        resolve('NoLicensePlate');
                     }
+
+                }
+
+                if (!plateFound) {
+                    console.log(`No License Plate ${fileName}`)
+                    resolve('NoLicensePlate');
                 }
                 resolve({ path: pathToFile, vert: newVertises })
             } else {
